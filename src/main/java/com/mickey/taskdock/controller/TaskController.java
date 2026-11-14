@@ -1,12 +1,13 @@
 package com.mickey.taskdock.controller;
 
-import com.mickey.taskdock.dto.TaskRequest;
+import com.mickey.taskdock.dto.CreateTaskRequest;
+import com.mickey.taskdock.dto.UpdateTaskRequest;
 import com.mickey.taskdock.dto.TaskResponse;
 import com.mickey.taskdock.service.TaskService;
 
 import jakarta.validation.Valid;
-
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class TaskController {
 	
 	@PostMapping
 	public ResponseEntity<TaskResponse> createTask(
-			@Valid @RequestBody TaskRequest request
+			@Valid @RequestBody CreateTaskRequest request
 	                                              ) {
 		
 		TaskResponse response = taskService.createTask(request);
@@ -35,9 +36,7 @@ public class TaskController {
 	@GetMapping
 	public ResponseEntity<List<TaskResponse>> getAllTasks() {
 		
-		return ResponseEntity.ok(
-				taskService.getAllTasks()
-		                        );
+		return ResponseEntity.ok(taskService.getAllTasks());
 	}
 	
 	@GetMapping("/{id}")
@@ -45,15 +44,13 @@ public class TaskController {
 			@PathVariable Long id
 	                                               ) {
 		
-		return ResponseEntity.ok(
-				taskService.getTaskById(id)
-		                        );
+		return ResponseEntity.ok(taskService.getTaskById(id));
 	}
 	
 	@PutMapping("/{id}")
 	public ResponseEntity<TaskResponse> updateTask(
 			@PathVariable Long id,
-			@Valid @RequestBody TaskRequest request
+			@Valid @RequestBody UpdateTaskRequest request
 	                                              ) {
 		
 		return ResponseEntity.ok(

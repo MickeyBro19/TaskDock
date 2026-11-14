@@ -1,6 +1,7 @@
 package com.mickey.taskdock.service.impl;
 
-import com.mickey.taskdock.dto.TaskRequest;
+import com.mickey.taskdock.dto.CreateTaskRequest;
+import com.mickey.taskdock.dto.UpdateTaskRequest;
 import com.mickey.taskdock.dto.TaskResponse;
 import com.mickey.taskdock.entity.Task;
 import com.mickey.taskdock.entity.enums.TaskStatus;
@@ -22,10 +23,12 @@ public class TaskServiceImpl implements TaskService {
 	private final TaskRepository taskRepository;
 	
 	@Override
-	public TaskResponse createTask(TaskRequest request) {
+	public TaskResponse createTask(CreateTaskRequest request) {
 		
 		Task task = Task.builder()
-				.taskName(request.taskName()).taskStatus(TaskStatus.PENDING).build();
+				.taskName(request.taskName())
+				.taskStatus(TaskStatus.PENDING)
+				.build();
 		
 		Task savedTask = taskRepository.save(task);
 		
@@ -38,7 +41,7 @@ public class TaskServiceImpl implements TaskService {
 		
 		return taskRepository.findAll()
 				.stream()
-				.map(this :: mapToResponse)
+				.map(this::mapToResponse)
 				.toList();
 	}
 	
@@ -54,7 +57,7 @@ public class TaskServiceImpl implements TaskService {
 	@Override
 	public TaskResponse updateTask(
 			Long id,
-			TaskRequest request
+			UpdateTaskRequest request
 	                              ) {
 		
 		Task task = findTask(id);
@@ -83,13 +86,16 @@ public class TaskServiceImpl implements TaskService {
 	
 	private TaskResponse mapToResponse(Task task) {
 		
+		boolean complete =
+				task.getTaskStatus() == TaskStatus.COMPLETED;
+		
 		return new TaskResponse(
 				task.getId(),
 				task.getTaskName(),
 				task.getTaskStatus(),
 				task.getCreatedAt(),
 				task.getUpdatedAt(),
-				task.isComplete()
+				complete
 		);
 	}
 }

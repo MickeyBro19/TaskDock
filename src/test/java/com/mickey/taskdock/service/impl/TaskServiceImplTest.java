@@ -1,6 +1,7 @@
 package com.mickey.taskdock.service.impl;
 
-import com.mickey.taskdock.dto.TaskRequest;
+import com.mickey.taskdock.dto.CreateTaskRequest;
+import com.mickey.taskdock.dto.UpdateTaskRequest;
 import com.mickey.taskdock.dto.TaskResponse;
 import com.mickey.taskdock.entity.Task;
 import com.mickey.taskdock.entity.enums.TaskStatus;
@@ -50,10 +51,7 @@ class TaskServiceImplTest {
 				           );
 		
 		TaskResponse response = taskService.createTask(
-				new TaskRequest(
-						"Learn Docker",
-						TaskStatus.PENDING
-				)
+				new CreateTaskRequest("Learn Docker")
 		                                              );
 		
 		assertEquals("Learn Docker", response.taskName());
@@ -62,7 +60,22 @@ class TaskServiceImplTest {
 		
 		verify(taskRepository).save(any(Task.class));
 	}
-
+	
+	@Test
+	void createTaskShouldDefaultStatusToPending() {
+		
+		when(taskRepository.save(any(Task.class)))
+				.thenAnswer(invocation -> invocation.getArgument(0));
+		
+		TaskResponse response = taskService.createTask(
+				new CreateTaskRequest("Learn Spring Security")
+		                                              );
+		
+		assertEquals(TaskStatus.PENDING, response.taskStatus());
+		assertFalse(response.isComplete());
+		
+		verify(taskRepository).save(any(Task.class));
+	}
 	
 	@Test
 	void getAllTasksShouldReturnTasks() {
@@ -112,7 +125,7 @@ class TaskServiceImplTest {
 		
 		TaskResponse response = taskService.updateTask(
 				1L,
-				new TaskRequest(
+				new UpdateTaskRequest(
 						"Learn Docker Compose",
 						TaskStatus.COMPLETED
 				)
