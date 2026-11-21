@@ -1,0 +1,31 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/taskdock_db
+      SPRING_DATASOURCE_USERNAME: taskdock
+      SPRING_DATASOURCE_PASSWORD: taskdock_dev_password
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: taskdock_db
+      POSTGRES_USER: taskdock
+      POSTGRES_PASSWORD: taskdock_dev_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - taskdock-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U taskdock -d taskdock_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  taskdock-data:
