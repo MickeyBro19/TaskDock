@@ -12,7 +12,7 @@
 #<--- Multistage Docker build --->
 
 #<---stage 1--->
-FROM eclipse-temurin:21-jdk as build
+FROM eclipse-temurin:21-jdk AS build
 WORKDIR /workspace
 COPY .mvn/ .mvn/
 COPY mvnw pom.xml ./

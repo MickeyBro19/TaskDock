@@ -7,6 +7,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/taskdock_db
       SPRING_DATASOURCE_USERNAME: taskdock
       SPRING_DATASOURCE_PASSWORD: taskdock_dev_password
+#      custom variable needs to be defined
+      NOTIFICATION_URL: http://notifications:8081
     depends_on:
       db:
         condition: service_healthy
@@ -26,6 +28,13 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  notifications:
+    image: hashicorp/http-echo:1.0.0
+    command: [ "-listen=:8081", "-text=Notification Service is alive" ]
+    ports:
+      - "8081:8081"
+
 
 volumes:
   taskdock-data:
